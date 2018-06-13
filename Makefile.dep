@@ -26,3 +26,4 @@ LDFLAGS =
 # slight variant for 386 FreeBSD
 # HOST = -DHOST_i386 -DFreeBSD
 # CPP=/usr/bin/cpp
+# 66666
