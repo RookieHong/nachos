@@ -1,7 +1,5 @@
-#include <cstdio>
-#include <cstdlib>
-#include <time.h>
 #include "system.h"
+#include "time.h"
 #define DEFAULT_KEY 0
 
 class DLLElement { 
@@ -27,7 +25,7 @@ public:
   void Append(void *item); 	// add to tail of list (set key = max_key+1) 
   void *Remove(int *keyPtr); 	// remove from head of list 
 				// set *keyPtr to key of the removed item 
-				// return item (or NULL if list is empty) 
+				// return item (or NULL if list is empty)
  
   bool IsEmpty();  		// return true if list has elements 
  

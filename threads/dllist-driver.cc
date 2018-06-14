@@ -2,10 +2,10 @@
 
 void Insert(int t, int N, DLList* list)
 {
-	srand((unsigned)time(NULL));
+	RandomInit((unsigned)time(NULL));
 	for(int i = 0; i < N; i++)
 	{
-		int random = rand() % 101;
+		int random = Random() % 101;
 		list->SortedInsert(NULL, random);
 		printf("Thread : %d inserted key = %d\n", t, random);
 	}

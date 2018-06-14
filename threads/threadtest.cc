@@ -10,13 +10,15 @@
 // of liability and disclaimer of warranty provisions.
 
 #include "copyright.h"
+#include "system.h"
+#include "synch.h"
 #include "dllist.h"
 #include "BoundedBuffer.h"
 #include "Table.h"
 #include "EventBarrier.h"
 
 // testnum,threadnum and nodenum are set in main.cc
-int testnum = 1, threadnum = 1, nodenum = 1, errType = 0;
+int testnum = 1, threadnum = 1, nodenum = 1, errType = 0, sleepTime = 2;
 DLList *dllist;
 Lock *listLock;
 Condition *listCondition;
@@ -96,8 +98,15 @@ testEventBarrier(int thread)
 		printf("thread:%d is waiting to enter the elevator\n", thread);
 		eBarrier->Wait();
 		printf("thread:%d entered the elevator\n", thread);
-		eBarrier->Complete();
 		printf("thread:%d completed\n", thread);
+		eBarrier->Complete();
+}
+
+void
+testAlarm(int thread)
+{
+	printf("thread:%d sleeps for %d, now is %d\n", thread, sleepTime*TimerTicks, stats->totalTicks);
+	myAlarm->Pause(sleepTime);
 }
 //----------------------------------------------------------------------
 // ThreadTest1
@@ -141,17 +150,18 @@ ThreadTest2()
 void
 ThreadTest3()
 {
-	DEBUG('t', "Entering ThreadTest3");
+	DEBUG('t', "Entering ThreadTest3\n");
 	bbuffer = new BoundedBuffer(5);
 	Thread *reader = new Thread("reader");
 	Thread *writer = new Thread("writer");
 	reader->Fork(KeepReading,1);
 	writer->Fork(KeepWriting,1);
 }
+
 void
 ThreadTest4()
 {
-	DEBUG('t',"Entering ThreadTest4");
+	DEBUG('t',"Entering ThreadTest4\n");
 	eBarrier = new EventBarrier("EventBarrier");
 	for(int i = 1; i <= threadnum; i++)
 	{
@@ -161,6 +171,19 @@ ThreadTest4()
 		t->Fork(testEventBarrier, i);
 	}
 	eBarrier->Signal();
+}
+
+void
+ThreadTest5()
+{
+	DEBUG('t',"Entering ThreadTest5\n");
+	for(int i = 1; i <= threadnum; i++)
+	{
+		char *threadName = new char[10];
+		sprintf(threadName, "Thread:%d", i);
+		Thread *t = new Thread(threadName);
+		t->Fork(testAlarm, i);
+	}
 }
 //----------------------------------------------------------------------
 // ThreadTest
@@ -180,9 +203,12 @@ ThreadTest()
    	   case 3:
    		   ThreadTest3();
    		   break;
-   		case 4:
-   			ThreadTest4();
-   			break;
+   	   case 4:
+   		   ThreadTest4();
+   		   break;
+	   case 5:
+	   	   ThreadTest5();
+		   break;
    	   default:
    		   printf("No test specified.\n");
    		   break;

@@ -1,4 +1,5 @@
 #include "dllist.h"
+#include "system.h"
 
 DLLElement::DLLElement( void *itemPtr, int sortKey )
 {

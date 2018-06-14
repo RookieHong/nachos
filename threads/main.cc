@@ -50,7 +50,6 @@
 #include "copyright.h"
 #undef MAIN
 
-#include "utility.h"
 #include "system.h"
 
 #ifdef THREADS
