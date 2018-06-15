@@ -7,18 +7,16 @@ existing interfaces.
 */
 
 #include "synch.h"
-#include "dllist.h"
 #include "EventBarrier.h"
+#include "thread.h"
 
-#define TIME_ELEVATOR_MOVE 100
-#define TIME_DOOR_OPEN 10
-#define TIME_RIDER_ENTER 20
+#define TIME_ELEVATOR_MOVE 3
+#define TIME_DOOR_OPEN 1
+#define TIME_RIDER_ENTER 2
 
-static int UP = 1;
-static int STOP = 0;
-static int DOWN = -1;
-
-static Building *buildingInstance;
+#define UP 1
+#define STOP 0
+#define DOWN -1
 
 class Elevator {
    public:
@@ -31,21 +29,23 @@ class Elevator {
      void OpenDoors();                //   signal exiters and enterers to action
      void CloseDoors();               //   after exiters are out and enterers are in
      void VisitFloor(int floor);      //   go to a particular floor
+     int getNextFloor();
+     void Run();
    
      // elevator rider interface (part 1): called by rider threads.
-     void Enter();                    //   get in
+     bool Enter();                    //   get in
      void Exit();                     //   get out (iff destinationFloor)
      void RequestFloor(int floor);    //   tell the elevator our destinationFloor
-     void ReceiveRequest(int Floor, int direction);
+     void ReceiveRequest(int Floor);
 
    private:
      char *name;
      int myID;
      int numFloors; 
-     DLList *requests;
      Lock *lock;
      int state;
      EventBarrier **elevatorOut;
+     Thread *myThread;
    
      int currentfloor;           // floor where currently stopped
      int occupancy;              // how many riders currently onboard
@@ -65,6 +65,7 @@ class Building {
      void CallDown(int fromFloor);    //   ... down
      Elevator *AwaitUp(int fromFloor); // wait for elevator arrival & going up
      Elevator *AwaitDown(int fromFloor); // ... down
+     Elevator *getElevator();
    
    private:
      char *name;

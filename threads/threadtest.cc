@@ -15,16 +15,18 @@
 #include "dllist.h"
 #include "BoundedBuffer.h"
 #include "Table.h"
-#include "EventBarrier.h"
+#include "Elevator.h"
 
 // testnum,threadnum and nodenum are set in main.cc
-int testnum = 1, threadnum = 1, nodenum = 1, errType = 0, sleepTime = 2;
+int testnum = 1, threadnum = 1, nodenum = 1, errType = 0, sleepTime = 2, numFloors = 20, riderOperations = 5;
 DLList *dllist;
 Lock *listLock;
 Condition *listCondition;
 BoundedBuffer *bbuffer;
 Table *table;
 EventBarrier *eBarrier;
+Building *buildingInstance;
+Elevator *elevator;
 
 extern void Insert(int t, int N, DLList* list), Remove(int t, int N, DLList* list);
 
@@ -108,6 +110,53 @@ testAlarm(int thread)
 	printf("thread:%d sleeps for %d, now is %d\n", thread, sleepTime*TimerTicks, stats->totalTicks);
 	myAlarm->Pause(sleepTime);
 }
+
+void 
+rider(int id, int srcFloor, int dstFloor) 
+{
+	Elevator *e;
+
+	if (srcFloor == dstFloor) return;
+
+	DEBUG('e',"Rider %d travelling from %d to %d\n",id,srcFloor,dstFloor);
+	do {
+		if (srcFloor < dstFloor) 
+		{
+			DEBUG('e', "Rider %d CallUp(%d)\n", id, srcFloor);
+			buildingInstance->CallUp(srcFloor);
+			DEBUG('e', "Rider %d AwaitUp(%d)\n", id, srcFloor);
+			e = buildingInstance->AwaitUp(srcFloor);
+		} else
+		{
+			DEBUG('e', "Rider %d CallDown(%d)\n", id, srcFloor);
+			buildingInstance->CallDown(srcFloor);
+			DEBUG('e', "Rider %d AwaitDown(%d)\n", id, srcFloor);
+			e = buildingInstance->AwaitDown(srcFloor);
+		}
+		DEBUG('e', "Rider %d Enter()\n", id);
+	} while (!e->Enter()); // elevator might be full!
+
+	DEBUG('e', "Rider %d RequestFloor(%d)\n", id, dstFloor);
+	e->RequestFloor(dstFloor); // doesn't return until arrival
+	DEBUG('e', "Rider %d Exit()\n", id);
+	e->Exit();
+	DEBUG('e', "Rider %d finished\n", id);
+}
+
+void
+elevatorOperator(int dummy)
+{
+	buildingInstance->getElevator()->Run();
+}
+
+void
+riderOperator(int id)
+{
+	RandomInit(id + (unsigned)time(NULL));
+	int srcFloor = Random() % numFloors + 1;
+	int dstFloor = Random() % numFloors + 1;
+	rider(id, srcFloor, dstFloor);
+}
 //----------------------------------------------------------------------
 // ThreadTest1
 // 	Set up a ping-pong between two threads, by forking a thread 
@@ -185,6 +234,22 @@ ThreadTest5()
 		t->Fork(testAlarm, i);
 	}
 }
+
+void
+ThreadTest6()
+{
+	DEBUG('t', "Entering ThreadTest6\n");
+	buildingInstance= new Building("building", 20,1);
+	Thread *e = new Thread("Elevator");
+	e->Fork(elevatorOperator, 1);
+	for(int i = 1; i <= threadnum; i++)
+	{
+		char *riderName = new char[20];
+		sprintf(riderName, "rider:%d", i);
+		Thread *r = new Thread(riderName);
+		r->Fork(riderOperator, i);
+	}
+}
 //----------------------------------------------------------------------
 // ThreadTest
 // 	Invoke a test routine.
@@ -208,6 +273,9 @@ ThreadTest()
    		   break;
 	   case 5:
 	   	   ThreadTest5();
+		   break;
+	   case 6:
+	   	   ThreadTest6();
 		   break;
    	   default:
    		   printf("No test specified.\n");

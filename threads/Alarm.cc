@@ -49,7 +49,7 @@ void Alarm::Wakeup()
 	{
 		if(stats->totalTicks >= wakeTime)
 		{
-			printf("%s wakes up, now is %d\n", thread->getName(), stats->totalTicks);
+			//DEBUG('e',"%s wakes up, now is %d\n", thread->getName(), stats->totalTicks);
 			pauseNum--;
 			scheduler->ReadyToRun(thread);
 			thread = (Thread*)queue->SortedRemove(&wakeTime);

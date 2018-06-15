@@ -125,7 +125,7 @@ utility.o: ../threads/utility.cc ../threads/copyright.h \
  /usr/include/bits/sys_errlist.h /usr/include/string.h \
  /usr/include/xlocale.h ../threads/stdarg.h
 threadtest.o: ../threads/threadtest.cc ../threads/copyright.h \
- ../threads/System.h ../threads/utility.h ../threads/bool.h \
+ ../threads/system.h ../threads/utility.h ../threads/bool.h \
  ../machine/sysdep.h ../threads/copyright.h /usr/include/stdio.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
@@ -139,8 +139,8 @@ threadtest.o: ../threads/threadtest.cc ../threads/copyright.h \
  ../threads/list.h ../machine/interrupt.h ../threads/list.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h \
  ../threads/Alarm.h ../threads/synch.h ../threads/dllist.h \
- ../threads/system.h /usr/include/time.h /usr/include/bits/time.h \
- ../threads/BoundedBuffer.h ../threads/Table.h ../threads/EventBarrier.h
+ /usr/include/time.h /usr/include/bits/time.h ../threads/BoundedBuffer.h \
+ ../threads/Table.h ../threads/EventBarrier.h ../threads/Elevator.h
 dllist.o: ../threads/dllist.cc ../threads/dllist.h ../threads/system.h \
  ../threads/copyright.h ../threads/utility.h ../threads/bool.h \
  ../machine/sysdep.h ../threads/copyright.h /usr/include/stdio.h \
@@ -226,6 +226,21 @@ Alarm.o: ../threads/Alarm.cc ../threads/system.h ../threads/copyright.h \
  ../threads/list.h ../machine/interrupt.h ../threads/list.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h \
  ../threads/Alarm.h ../threads/synch.h
+Elevator.o: ../threads/Elevator.cc ../threads/Elevator.h \
+ ../threads/synch.h ../threads/copyright.h ../threads/thread.h \
+ ../threads/utility.h ../threads/bool.h ../machine/sysdep.h \
+ ../threads/copyright.h /usr/include/stdio.h /usr/include/features.h \
+ /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-32.h \
+ /usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/stddef.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
+ ../threads/stdarg.h /usr/include/bits/stdio_lim.h \
+ /usr/include/bits/sys_errlist.h /usr/include/string.h \
+ /usr/include/xlocale.h ../threads/list.h ../threads/EventBarrier.h \
+ ../threads/system.h ../threads/scheduler.h ../machine/interrupt.h \
+ ../threads/list.h ../machine/stats.h ../machine/timer.h \
+ ../threads/utility.h ../threads/Alarm.h
 interrupt.o: ../machine/interrupt.cc ../threads/copyright.h \
  ../machine/interrupt.h ../threads/list.h ../threads/copyright.h \
  ../threads/utility.h ../threads/bool.h ../machine/sysdep.h \

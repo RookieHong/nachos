@@ -115,7 +115,7 @@ Lock::~Lock()
 
 void Lock::Acquire()
 {
-	printf("Thread %s is trying to acquire lock %s\n", currentThread->getName(), name);
+	//printf("Thread %s is trying to acquire lock %s\n", currentThread->getName(), name);
 	IntStatus oldLevel = interrupt->SetLevel(IntOff);	// disable interrupts
 
 	while(value == BUSY)
@@ -126,7 +126,7 @@ void Lock::Acquire()
 
 	value = BUSY;
 	heldBy = currentThread;
-	printf("lock %s is now acquired by %s\n", name, currentThread->getName());
+	//printf("lock %s is now acquired by %s\n", name, currentThread->getName());
 
 	(void) interrupt->SetLevel(oldLevel);
 }
@@ -143,7 +143,7 @@ void Lock::Release()
 
 	value = FREE;
 	heldBy = NULL;
-	printf("lock %s is now released by %s\n", name, currentThread->getName());
+	//printf("lock %s is now released by %s\n", name, currentThread->getName());
 
 	(void) interrupt->SetLevel(oldLevel);
 }
