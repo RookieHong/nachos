@@ -131,13 +131,11 @@ void Elevator::Run()
 					state = DOWN;
 					OpenDoors();
 					CloseDoors();
-					VisitFloor(currentfloor - 1);
 				}
 				else
 				{
 					OpenDoors();
 					CloseDoors();
-					VisitFloor(currentfloor + 1);
 				}
 			}
 		}
@@ -164,13 +162,11 @@ void Elevator::Run()
 					state = UP;
 					OpenDoors();
 					CloseDoors();
-					VisitFloor(currentfloor + 1);
 				}
 				else
 				{
 					OpenDoors();
 					CloseDoors();
-					VisitFloor(currentfloor - 1);
 				}
 			}
 		}
